@@ -13,6 +13,7 @@ class StudentsController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('auth');
         App::setLocale('fa');
     }
 
@@ -23,7 +24,8 @@ class StudentsController extends Controller
      */
     public function index()
     {
-        //
+        $students = Students::all();
+        return view('pages.students.index')->with('students', $students);
     }
 
     /**
