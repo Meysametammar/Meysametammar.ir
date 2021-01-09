@@ -3,7 +3,7 @@ version: "3"
 services:
     app:
         build:
-            context: ./vendor/laravel/sail/runtimes/8.0
+            context: ./vendor/laravel/sail/runtimes/7.4
             dockerfile: Dockerfile
             args:
                 WWWGROUP: "${WWWGROUP}"
@@ -49,6 +49,21 @@ services:
             - "sailredis:/data"
         networks:
             - sail
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links:
+            - mysql
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
+        restart: always
+        networks:
+            - sail
+        ports:
+            - 8081:80
+
     # memcached:
     #     image: 'memcached:alpine'
     #     ports:
