@@ -1,7 +1,12 @@
-import '../styles/globals.css'
+import { ConfigProvider } from "antd";
+import "antd/dist/antd.css";
+import "../styles/vars.css";
+import "../styles/global.css";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+export default function MyApp({ Component, pageProps }) {
+    return (
+        <ConfigProvider direction="rtl">
+            <Component {...pageProps} />
+        </ConfigProvider>
+    );
 }
-
-export default MyApp
