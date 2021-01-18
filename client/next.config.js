@@ -1,5 +1,21 @@
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-    enabled: process.env.ANALYZE === "true"
-});
+require("dotenv").config();
 
-module.exports = withBundleAnalyzer();
+const path = require("path");
+const Dotenv = require("dotenv-webpack");
+
+module.exports = {
+    webpack: config => {
+        config.plugins = config.plugins || [];
+        config.plugins = [
+            ...config.plugins,
+
+            // Read the .env file
+            new Dotenv({
+                path: path.join(__dirname, ".env"),
+                systemvars: true
+            })
+        ];
+        config.resolve.alias["~"] = path.resolve(__dirname);
+        return config;
+    }
+};

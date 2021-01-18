@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/router";
 import styles from "./styles.module.scss";
-import BaseLayout from "../../components/layouts/BaseLayout";
+import BaseLayout from "~/components/layouts/BaseLayout";
+import Api from "~/controller/Api";
+import Auth from "~/controller/Auth";
+import createPersistedState from "use-persisted-state";
 
 const breadCrumbs = [
     {
@@ -17,8 +21,30 @@ const breadCrumbs = [
 ];
 
 const Login = () => {
+    const useCounterState = createPersistedState("count");
+    const [count, setCount] = useCounterState(0);
+    const router = useRouter();
     const onFinish = values => {
-        console.log("Success:", values);
+        setCount(currentCount => currentCount + 1);
+        // console.log(count);
+        axios.get(`${process.env.API_ENDPOINT}sanctum/csrf-cookie`).then(() => {
+            Api.post("/api/login", {
+                phone: values.phone,
+                password: values.password
+            })
+                .then(res => {
+                    Auth.login(res.data.token);
+                    // router.push("/");
+                    // Api.get("/api/user")
+                    //     .then(user => {
+                    //         console.log(user);
+                    //     })
+                    //     .catch(e => {
+                    //         console.log("WTH");
+                    //     });
+                })
+                .catch(e => console.log(e));
+        });
     };
 
     return (
@@ -32,12 +58,12 @@ const Login = () => {
                 wrapperCol={{ md: 20, xs: 24 }}
             >
                 <Form.Item
-                    name="username"
-                    rules={[{ required: true, message: "لطفا نام کاربری را وارد کنید!" }]}
+                    name="phone"
+                    rules={[{ required: true, message: "لطفا تلفن همراه خود را وارد کنید!" }]}
                 >
                     <Input
                         prefix={<UserOutlined className="site-form-item-icon" />}
-                        placeholder="نام کاربری"
+                        placeholder="تلفن همراه"
                     />
                 </Form.Item>
                 <Form.Item
@@ -63,7 +89,6 @@ const Login = () => {
                     <Button type="primary" htmlType="submit" className="login-form-button">
                         ورود
                     </Button>
-                    &nbsp; یا &nbsp;<Link href="/register">ثبت نام!</Link>
                 </Form.Item>
             </Form>
         </BaseLayout>

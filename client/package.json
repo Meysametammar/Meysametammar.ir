@@ -11,13 +11,17 @@
         "@ant-design/icons": "4.2.1",
         "@next/bundle-analyzer": "^9.1.4",
         "antd": "4.3.0",
+        "axios": "^0.21.1",
         "cross-env": "^7.0.2",
         "dayjs": "1.8.28",
+        "dotenv": "^8.2.0",
+        "dotenv-webpack": "^6.0.0",
         "esm": "^3.2.25",
         "next": "10.0.5",
         "postcss-preset-env": "^6.7.0",
         "react": "17.0.1",
         "react-dom": "17.0.1",
-        "sass": "^1.32.2"
+        "sass": "^1.32.2",
+        "use-persisted-state": "^0.3.3"
     }
 }
