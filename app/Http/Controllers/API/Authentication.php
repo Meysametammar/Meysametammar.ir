@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 
@@ -16,61 +19,46 @@ class Authentication extends Controller
      * Undocumented function
      *
      * @param Request $request
-     * @return void
+     * @return Facade\FlareClient\Http\Response
      */
     public function login(Request $request)
     {
         $request->validate([
-            "username" => "required|string",
+            "phone" => "required|string",
             "password" => "required|string",
+            "remember" => "",
         ]);
-
-        $http = new \GuzzleHttp\Client();
-
-        try {
-            $response = $http->post(URL::to("/oauth/token"), [
-                "form_params" => [
-                    "grant_type" => "password",
-                    "client_id" => env("PASSPORT_PERSONAL_ACCESS_CLIENT_ID"),
-                    "client_secret" => env("PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET"),
-                    "phone" => $request->phone,
-                    "password" => $request->password,
-                    "scope" => "*",
-                ],
-            ]);
-            return $response->getBody();
-        } catch (\GuzzleHttp\Exception\BadResponseException $th) {
-            if ($th->getCode() === 400) {
-                return response()->json(
-                    "Invalid Request. Please enter a username and password",
-                    $th->getCode()
-                );
-            }
-            if ($th->getCode() === 401) {
-                return response()->json(
-                    "Your credentials are incorrect. Please try again.",
-                    $th->getCode()
-                );
-            }
-            return response()->json("Something went wrong in server.", $th->getCode());
+        $user = User::where("phone", $request->phone)->first();
+        if ($user === null) {
+            $user = $this->register($request->phone, $request->password);
+        }
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json("unvalid credential.", 402);
+        }
+        if (
+            Auth::attempt(
+                ["phone" => $request->phone, "password" => $request->password],
+                $request->remember
+            )
+        ) {
+            $token = $request->user()->createToken($user->id);
+            return ["token" => $token->plainTextToken];
         }
     }
 
     /**
      * Undocumented function
      *
-     * @param Request $request
-     * @return void
+     * @param string $phone
+     * @param string $password
+     * @return \App\Models\User
      */
-    public function register(Request $request)
+    public function register(string $phone, string $password)
     {
-        $request->validate([
-            "phone" => ["required", "string", "max:12", "unique:users"],
-            "password" => ["required", "string", "min:6"],
-        ]);
-        return \App\Models\User::create([
-            "phone" => $request->phone,
-            "password" => Hash::make($request->password),
-        ]);
+        $user = new User();
+        $user->phone = $phone;
+        $user->password = Hash::make($password);
+        $user->save();
+        return $user;
     }
 }
