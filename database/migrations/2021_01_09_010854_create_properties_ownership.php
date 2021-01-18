@@ -24,6 +24,7 @@ class CreatePropertiesOwnership extends Migration
             $table->text("description")->nullable();
             $table->dateTime("alarm_at")->nullable();
             $table->text("alarm_description")->nullable();
+            $table->integer("number")->default(1);
             $table->timestamps();
             $table->softDeletes();
         });

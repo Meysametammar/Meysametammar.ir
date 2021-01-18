@@ -15,9 +15,11 @@ class CreatePropertiesTable extends Migration
     {
         Schema::create("properties", function (Blueprint $table) {
             $table->uuid("id")->primary();
+            $table->string("code");
             $table->string("title");
             $table->text("description")->nullable();
             $table->text("picture")->nullable();
+            $table->integer("number")->default(1);
             $table->timestamps();
             $table->softDeletes();
         });
