@@ -21,11 +21,11 @@ const breadCrumbs = [
 ];
 
 const Login = () => {
-    const useCounterState = createPersistedState("count");
-    const [count, setCount] = useCounterState(0);
     const router = useRouter();
+    if (Auth.is_in()) {
+        router.push("/");
+    }
     const onFinish = values => {
-        setCount(currentCount => currentCount + 1);
         // console.log(count);
         axios.get(`${process.env.API_ENDPOINT}sanctum/csrf-cookie`).then(() => {
             Api.post("/api/login", {
@@ -34,14 +34,7 @@ const Login = () => {
             })
                 .then(res => {
                     Auth.login(res.data.token);
-                    // router.push("/");
-                    // Api.get("/api/user")
-                    //     .then(user => {
-                    //         console.log(user);
-                    //     })
-                    //     .catch(e => {
-                    //         console.log("WTH");
-                    //     });
+                    router.push("/");
                 })
                 .catch(e => console.log(e));
         });
@@ -87,7 +80,7 @@ const Login = () => {
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit" className="login-form-button">
-                        ورود
+                        ورود / ثبت‌نام
                     </Button>
                 </Form.Item>
             </Form>
