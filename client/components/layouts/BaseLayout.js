@@ -1,21 +1,14 @@
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Layout, Breadcrumb } from "antd";
 import PropTypes from "prop-types";
 import styles from "./Base.module.scss";
 import Link from "next/link";
-const { Header, Content, Footer } = Layout;
+import Footer from "./FooterLayout";
+import Header from "./HeaderLayout";
+const { Content } = Layout;
 
 const BaseLayout = ({ children, breadCrumbs }) => (
     <Layout className="layout" className={styles.layout}>
-        <Header>
-            <div className="logo" />
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["2"]}>
-                <Menu.Item key="1">
-                    <Link href="/login">login</Link>
-                </Menu.Item>
-                <Menu.Item key="2">nav 2</Menu.Item>
-                <Menu.Item key="3">nav 3</Menu.Item>
-            </Menu>
-        </Header>
+        <Header />
         <Content style={{ padding: "0 50px" }}>
             <Breadcrumb style={{ margin: "16px 0" }}>
                 {breadCrumbs.map((bread_crumb, index) => {
@@ -30,7 +23,7 @@ const BaseLayout = ({ children, breadCrumbs }) => (
             </Breadcrumb>
             <div className="site-layout-content">{children}</div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>Ant Design ©2018 Created by Ant UED</Footer>
+        <Footer />
     </Layout>
 );
 BaseLayout.propTypes = {
