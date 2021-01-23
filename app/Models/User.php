@@ -12,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, Uuids, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, Uuids;
 
     /**
      * The attributes that are mass assignable.
@@ -36,4 +36,9 @@ class User extends Authenticatable
     protected $casts = [
         "phone_verified_at" => "datetime",
     ];
+
+    public function files()
+    {
+        return $this->belongsToMany(\App\Models\Files::class);
+    }
 }
