@@ -7,7 +7,7 @@ const Api = axios.create({
 });
 
 if (Auth.is_in()) {
-    Api.defaults.headers.common = { Authorization: `bearer ${Auth.token()}` };
+    Api.defaults.headers.common = { Authorization: `Bearer ${Auth.token()}` };
 }
 
 Api.interceptors.response.use(
