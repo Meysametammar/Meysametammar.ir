@@ -20,3 +20,10 @@ Route::middleware("auth:sanctum")->get("/user", function (Request $request) {
 });
 
 Route::post("/login", [\App\Http\Controllers\API\Authentication::class, "login"])->name("login");
+
+Route::get("/file/{file}", [\App\Http\Controllers\API\FilesController::class, "show"])
+    ->middleware("guest")
+    ->name("file.show");
+Route::middleware("auth:sanctum")
+    ->resource("/file", \App\Http\Controllers\API\FilesController::class)
+    ->only(["store", "destroy"]);
