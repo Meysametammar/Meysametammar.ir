@@ -8,10 +8,14 @@ const login = token => {
 
 const logout = () => {
     localStorage.clear();
+    window.location = "/login";
 };
 
 const token = () => {
-    return localStorage.getItem(`${APPNAME}_token`);
+    if (typeof localStorage !== "undefined") {
+        return localStorage.getItem(`${APPNAME}_token`);
+    }
+    return null;
 };
 
 const is_in = () => {
