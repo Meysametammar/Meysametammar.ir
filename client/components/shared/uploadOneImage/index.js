@@ -37,12 +37,14 @@ const UploadOneImage = ({ setFileId, actionName }) => {
         if (info.file.status === "uploading") {
             setLoading(true);
             return;
-        }
-        if (info.file.status === "done") {
+        } else if (info.file.status === "done") {
             getBase64(info.file.originFileObj, imageUrl => {
                 setLoading(false);
                 setFile({ url: imageUrl });
             });
+        } else if (info.file.status === "error") {
+            setLoading(false);
+            message.error("upload failed.");
         }
     };
 
@@ -51,6 +53,13 @@ const UploadOneImage = ({ setFileId, actionName }) => {
             Authorization: `Bearer ${Auth.token()}`
         },
         endpoint: `${process.env.API_ENDPOINT}api/file`
+    };
+
+    const onErrorUploadRequest = e => {
+        handleChange({ file: { status: "error" } });
+        if (e.status == 401) {
+            Auth.logout();
+        }
     };
     return (
         <Upload
@@ -61,6 +70,8 @@ const UploadOneImage = ({ setFileId, actionName }) => {
             onChange={handleChange}
             headers={uploadRequest.headers}
             action={uploadRequest.endpoint}
+            // customRequest={onErrorUploadRequest}
+            onError={onErrorUploadRequest}
             data={{ type: actionName }}
         >
             {file ? <img src={file.url} alt="yourImage" style={{ width: "100%" }} /> : uploadButton}
